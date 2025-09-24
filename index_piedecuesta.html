@@ -1,0 +1,32 @@
+<!-- index_piedcuesta.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Colegios en Piedecuesta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>#map { height: 100vh; }</style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([6.987, -73.053], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    fetch('colegios_piedecuesta.geojson')
+      .then(res => res.json())
+      .then(data => {
+        L.geoJSON(data, {
+          onEachFeature: (feature, layer) => {
+            const p = feature.properties;
+            layer.bindPopup(`<strong>${p.nombre || "Colegio"}</strong><br>Barrio: ${p.barrio || "N/D"}`);
+          },
+          pointToLayer: (feature, latlng) => L.marker(latlng)
+        }).addTo(map);
+      });
+  </script>
+</body>
+</html>
